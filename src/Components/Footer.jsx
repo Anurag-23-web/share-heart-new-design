@@ -33,7 +33,7 @@ const Footer = () => {
     return (
         <div className='footerSec'>
             <div className='footerSecin'>
-                <p>if testimony already recorded ? Upload here</p>
+                <p>if testimony already recorded ?  <Link to="/upload-story" style={{textDecoration:"none"}} >Upload here</Link> </p>
                 <ul className='footerSocial'>
                     <li><Link to={content.facebookLink}><img src={FooterIC1} /></Link></li>
                     <li><Link to={content.instagramLink}><img src={FooterIC2} /></Link></li>

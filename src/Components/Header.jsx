@@ -82,7 +82,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
     setModalOpen(false);
   };
 
@@ -206,6 +206,9 @@ const Header = () => {
             <div className="topMenulink">
               <Link to="/video-reels">Watch Real Stories</Link>
             </div>
+            {/* <div className="topMenulink">
+              <Link to="/video"> Reel</Link>
+            </div> */}
           </div>
           <div className="menuLinks">
             <div className="menulnkHeading">Company</div>

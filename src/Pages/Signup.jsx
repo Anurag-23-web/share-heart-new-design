@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "react-bootstrap";
 import { serverApi } from "../config";
-import { toast } from "react-toastify"; // Import toast
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -11,23 +11,32 @@ const Signup = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    clearErrors,
   } = useForm();
-  const [loading, setLoading] = useState(false); // Loading state for submission
-  const [showOtpField, setShowOtpField] = useState(false); // Flag for OTP field
-  const [otp, setOtp] = useState(""); // OTP input value
-  const [timer, setTimer] = useState(60); // OTP timer
-  const [otpExpired, setOtpExpired] = useState(false); // OTP expiration flag
-  const [resendDisabled, setResendDisabled] = useState(false); // Disable resend button
-  const [errorMessage, setErrorMessage] = useState(""); // Error message
-  const [successMessage, setSuccessMessage] = useState(""); // Success message
+  const [loading, setLoading] = useState(false);
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [timer, setTimer] = useState(60);
+  const [otpExpired, setOtpExpired] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
     lastName: "",
-  }); // Store form data
+  });
   const navigate = useNavigate();
 
-  // Function to start OTP timer
+  useEffect(() => {
+    // Automatically clear success message after 2 seconds
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(""), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
   const startTimer = () => {
     setTimer(60);
     const intervalId = setInterval(() => {
@@ -35,14 +44,12 @@ const Signup = () => {
     }, 1000);
     setTimeout(() => {
       clearInterval(intervalId);
-      setOtpExpired(true); // Mark OTP as expired
-    }, 60000); // Stop timer after 60 seconds
+      setOtpExpired(true);
+    }, 60000);
   };
 
   const onSubmit = async (data) => {
-    setLoading(true); // Set loading to true during API call
-
-    // Set form data for email, first name, last name
+    setLoading(true);
     setFormData({
       email: data.email,
       firstName: data.firstName,
@@ -50,7 +57,6 @@ const Signup = () => {
     });
 
     try {
-      // Call OTP generation API with the form data
       const response = await axios.post(`${serverApi}/generate-otp-signup`, {
         email: data.email,
       });
@@ -65,18 +71,23 @@ const Signup = () => {
         setSuccessMessage("");
       }
     } catch (error) {
-      setErrorMessage("An error occurred: " + error.message);
+      setErrorMessage(error.response.data.message);
       setSuccessMessage("");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
     setLoading(true);
 
+    if (otp.length !== 6) {
+      setErrorMessage("OTP must be exactly 6 digits");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Send request to backend to verify OTP and complete the signup
       const response = await axios.post(`${serverApi}/signup`, {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -92,13 +103,13 @@ const Signup = () => {
         localStorage.setItem("email", response.data.data.local.email);
         localStorage.setItem("userId", response.data.data._id);
 
-        navigate("/"); // Redirect after successful signup
+        navigate("/");
       } else {
         setErrorMessage(response.data.message);
         setSuccessMessage("");
       }
     } catch (error) {
-      setErrorMessage("Error verifying OTP: " + error.message);
+      setErrorMessage("Error verifying OTP: " + error.response.data.message);
       setSuccessMessage("");
     } finally {
       setLoading(false);
@@ -118,8 +129,8 @@ const Signup = () => {
       if (response.data.status === "success") {
         setSuccessMessage(response.data.message);
         setResendDisabled(false);
-        setOtpExpired(false); // Reset OTP expiration flag
-        startTimer(); // Start timer again
+        setOtpExpired(false);
+        startTimer();
       } else {
         setErrorMessage(response.data.message);
         setResendDisabled(false);
@@ -136,8 +147,13 @@ const Signup = () => {
         <div className="formheading">
           <h3>Signup</h3>
         </div>
+        {errorMessage && (
+          <div className="alert alert-danger mt-3">{errorMessage}</div>
+        )}
+        {successMessage && (
+          <div className="alert alert-success mt-3">{successMessage}</div>
+        )}
 
-        {/* React Hook Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="form-lable-mangne">
           <div className="form-group">
             <label>First Name</label>
@@ -184,27 +200,32 @@ const Signup = () => {
             )}
           </div>
 
-          <div className="mb-0 formBtn">
-            <Button type="submit" variant="danger" disabled={loading}>
-              {loading ? "Submitting..." : "Generate OTP"}
-            </Button>
-          </div>
-        </form>
-
+          {!showOtpField && (
+            <div className="mb-0 formBtn">
+              <Button type="submit" variant="danger" disabled={loading}>
+                {loading ? "Submitting..." : "Generate OTP"}
+              </Button>
+            </div>
+          )}
         {showOtpField && (
           <>
             <div className="form-group mt-4">
-              <label>Enter OTP</label>
+              <label>OTP</label>
               <input
                 type="text"
                 className={`form-control ${errors.otp ? "is-invalid" : ""}`}
                 placeholder={`Enter OTP (${timer}s)`}
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onInput={(e) => {
+                  const inputValue = e.target.value.replace(/\D/g, ""); // Only allow numeric input
+                  setOtp(inputValue);
+                  if (inputValue.length === 6)
+                    setErrorMessage(""); // Clear error on exact 6 digits
+                  else setErrorMessage("OTP must be exactly 6 digits");
+                }}
+                maxLength={6} // Ensure OTP is at most 6 digits
               />
-              {errors.otp && (
-                <div className="invalid-feedback">{errors.otp.message}</div>
-              )}
+         
             </div>
 
             <div className="mb-0 formBtn">
@@ -228,16 +249,9 @@ const Signup = () => {
             </div>
           </>
         )}
+        </form>
 
-        {/* Display error or success message */}
-        {errorMessage && (
-          <div className="alert alert-danger mt-3">{errorMessage}</div>
-        )}
-        {successMessage && (
-          <div className="alert alert-success mt-3">{successMessage}</div>
-        )}
 
-        {/* Login prompt */}
         <div className="text-center mt-4">
           <p>
             If you already have an existing account

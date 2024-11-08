@@ -2,12 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import {toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { serverApi } from "../config";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
   const [userDetails, setUserDetails] = useState({
     firstName: localStorage.getItem("firstName") || "John",
     lastName: localStorage.getItem("lastName") || "Doe",
@@ -15,7 +21,7 @@ const Profile = () => {
     userId: localStorage.getItem("userId") || "defaultUserId", // Default if no userId in localStorage
   });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Set initial values for form inputs
@@ -29,7 +35,10 @@ const Profile = () => {
     const data = { ...formData, userId: userDetails.userId };
 
     try {
-      const response = await axios.post(`${serverApi}/update_user_profile`, data);
+      const response = await axios.post(
+        `${serverApi}/update_user_profile`,
+        data
+      );
       console.log(response);
       if (response.data.status === "success") {
         setUserDetails(data);
@@ -38,23 +47,26 @@ const Profile = () => {
         localStorage.setItem("email", data.email);
         localStorage.setItem("userId", data.userId); // Update userId if needed
         toast.success("Profile updated successfully");
-        navigate("/")
-      } else {
-        console.log(response.data.message);
-      }
+        navigate("/profile");
+      } 
     } catch (error) {
-      console.log(error.message);
+      console.log(error.response.message);
+      toast.error(error.response.data.message);
     }
   };
 
   return (
     <div className="container mt-5">
+      <ToastContainer />
       <div className="formSec mb-5">
         <div className="formheading text-center">
           <h3>Edit Profile</h3>
         </div>
 
-        <form onSubmit={handleSubmit(handleEditProfile)} className="form-lable-mangne">
+        <form
+          onSubmit={handleSubmit(handleEditProfile)}
+          className="form-lable-mangne"
+        >
           <div className="form-group">
             <label>First Name</label>
             <input
@@ -62,7 +74,9 @@ const Profile = () => {
               className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
               {...register("firstName", { required: "First Name is required" })}
             />
-            {errors.firstName && <p className="text-danger">{errors.firstName.message}</p>}
+            {errors.firstName && (
+              <p className="text-danger">{errors.firstName.message}</p>
+            )}
           </div>
 
           <div className="form-group">
@@ -72,7 +86,9 @@ const Profile = () => {
               className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
               {...register("lastName", { required: "Last Name is required" })}
             />
-            {errors.lastName && <p className="text-danger">{errors.lastName.message}</p>}
+            {errors.lastName && (
+              <p className="text-danger">{errors.lastName.message}</p>
+            )}
           </div>
 
           <div className="form-group">
@@ -88,7 +104,9 @@ const Profile = () => {
                 },
               })}
             />
-            {errors.email && <p className="text-danger">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-danger">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="mb-0 formBtn text-center">

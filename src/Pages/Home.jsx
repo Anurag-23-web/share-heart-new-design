@@ -27,6 +27,11 @@ const Home = () => {
         getPageData();
     }, [])
 
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top
+      }, []);
+
     async function getPageData() {
         try {
             const response = await axios.get(`${serverApi}/web/home-page-content`);
@@ -70,6 +75,11 @@ const Home = () => {
         // Unsupported file type
         return <p>Unsupported file type</p>;
     };
+
+
+    const handleNavigate = () => {
+        navigate("/upload-story")
+    }
 
     return (
         <div>
@@ -167,7 +177,7 @@ const Home = () => {
             <section className='homesubmit'>
                 <div className='homesubmitin'>
                     <h2 className='headingtype2'>Submit your story now</h2>
-                    <Button type='submit' variant='danger'>Submit now</Button>
+                    <Button type='submit' variant='danger' onClick={handleNavigate} >Submit now</Button>
                 </div>
             </section>
         </div>

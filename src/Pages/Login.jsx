@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
   const [timer, setTimer] = useState(60);
   const [resendDisabled, setResendDisabled] = useState(false);
@@ -21,7 +20,12 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
     getValues,
+    setValue,
+    clearErrors,
+    watch,
   } = useForm();
+
+  const otpValue = watch("otp", "");
 
   useEffect(() => {
     let intervalId;
@@ -51,15 +55,14 @@ const Login = () => {
       const response = await axios.post(`${serverApi}/generate-otp`, {
         email: data.email,
       });
+
       if (response.data.status === "success") {
         setShowOtpField(true);
-        notifySuccess("OTP sent to your email.");
+        notifySuccess(response.data.message || "OTP sent successfully.");
         startTimer();
-      } else {
-        notifyError("Failed to send OTP: " + response.data.message);
       }
     } catch (error) {
-      notifyError("An error occurred: " + error.message);
+      notifyError(error?.response?.data?.message || "User not found.");
     } finally {
       setLoading(false);
     }
@@ -67,15 +70,10 @@ const Login = () => {
 
   const handleVerifyOtp = async () => {
     setLoading(true);
-    if (!otp.trim() || otp.trim().length !== 6 || isNaN(otp.trim())) {
-      notifyError("Please enter a valid 6-digit OTP.");
-      setLoading(false);
-      return;
-    }
     try {
       const response = await axios.post(`${serverApi}/verify-otp`, {
         email: getValues("email"),
-        otp,
+        otp: otpValue,
       });
       if (response.data.status === "success") {
         notifySuccess("Login successful!");
@@ -83,13 +81,12 @@ const Login = () => {
         localStorage.setItem("firstName", response.data.data.firstName);
         localStorage.setItem("lastName", response.data.data.lastName || "");
         localStorage.setItem("email", response.data.data.local.email);
-
         navigate("/");
       } else {
-        notifyError(response.data.message);
+        notifyError(response.data.message || "Invalid OTP.");
       }
     } catch (error) {
-      notifyError("Error verifying OTP: " + error.message);
+      notifyError(error?.response?.data?.message || "Error verifying OTP.");
     } finally {
       setLoading(false);
     }
@@ -102,13 +99,13 @@ const Login = () => {
         email: getValues("email"),
       });
       if (response.data.status === "success") {
-        notifySuccess("OTP resent to your email.");
+        notifySuccess(response.data.message || "OTP resent successfully.");
         startTimer();
       } else {
-        notifyError("Failed to resend OTP: " + response.data.message);
+        notifyError("Failed to resend OTP.");
       }
     } catch (error) {
-      notifyError("Error resending OTP: " + error.message);
+      notifyError(error?.response?.data?.message || "Error resending OTP.");
     } finally {
       setLoading(false);
     }
@@ -127,9 +124,15 @@ const Login = () => {
           <label>Email</label>
           <input
             type="email"
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Enter a valid email address",
+              },
+            })}
             placeholder="Enter your email"
-            className="form-control"
+            className={`form-control ${errors.email ? "is-invalid" : ""}`}
           />
           {errors.email && (
             <div className="invalid-feedback d-block">
@@ -140,39 +143,58 @@ const Login = () => {
 
         {!showOtpField ? (
           <div className="d-flex justify-content-center">
-          <Button type="submit" variant="danger" disabled={loading} className="">
-            {loading ? "Submitting..." : "Get OTP"}
-          </Button>
+            <Button type="submit" variant="danger" disabled={loading}>
+              {loading ? "Submitting..." : "Get OTP"}
+            </Button>
           </div>
-          
         ) : (
           <>
             <div className="form-group mt-3">
               <label>OTP</label>
               <input
                 type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="form-control"
+                {...register("otp", {
+                  required: "OTP is required",
+                  pattern: {
+                    value: /^\d{6}$/,
+                    message: "OTP must be a 6-digit number",
+                  },
+                })}
+                value={otpValue}
+                onChange={(e) => {
+                  setValue("otp", e.target.value);
+                  clearErrors("otp");
+                }}
+                className={`form-control ${errors.otp ? "is-invalid" : ""}`}
                 placeholder={`Enter OTP (${timer}s)`}
+                maxLength="6"
               />
+              {errors.otp && (
+                <div className="invalid-feedback d-block">
+                  {errors.otp.message}
+                </div>
+              )}
             </div>
             {otpExpired ? (
-              <Button
-                variant="danger"
-                onClick={handleResendOtp}
-                disabled={resendDisabled}
-              >
-                Resend OTP
-              </Button>
+              <div className="d-flex justify-content-center">
+                <Button
+                  variant="danger"
+                  onClick={handleResendOtp}
+                  disabled={resendDisabled}
+                >
+                  {loading ? "Resending..." : "Resend OTP"}
+                </Button>
+              </div>
             ) : (
-              <Button
-                variant="success"
-                onClick={handleVerifyOtp}
-                disabled={loading}
-              >
-                {loading ? "Verifying..." : "Verify OTP"}
-              </Button>
+              <div className="d-flex justify-content-center">
+                <Button
+                  variant="danger"
+                  onClick={handleSubmit(handleVerifyOtp)}
+                  disabled={loading}
+                >
+                  {loading ? "Verifying..." : "Verify OTP"}
+                </Button>
+              </div>
             )}
           </>
         )}

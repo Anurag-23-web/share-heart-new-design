@@ -3,6 +3,8 @@ body{
   padding: 0;margin: 0;font-family: "Montserrat", sans-serif;font-weight: 400;font-size: 24px;
   height: 100%;
 }
+
+
 .menusidebar::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -28,6 +30,7 @@ body{
   position: relative;
   overflow: hidden;
   min-height: 100vh;
+  
 }
 .headerSec {
   padding: 40px 50px;
@@ -942,3 +945,5 @@ body {
     font-size: 1.6rem;
   }
 }
+
+

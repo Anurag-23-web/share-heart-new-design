@@ -18,6 +18,10 @@ import InstallApp from "./Pages/InstallApp";
 import HelpDesk from "./Pages/HelpDesk";
 import Profile from "./Pages/Profile";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import { useEffect } from "react";
+// import Video  from "./Pages/Video";
+
+
 
 function Layout() {
   const location = useLocation();
@@ -26,6 +30,10 @@ function Layout() {
   const shouldShowHeaderFooter = !hideHeaderFooterRoutes.includes(
     location.pathname
   );
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top
+  }, []);
 
   return (
     <>
@@ -46,6 +54,8 @@ function Layout() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/install-app" element={<InstallApp />} />
         <Route path="/help-desk" element={<HelpDesk />} />
+        {/* <Route path="/video" element={<Video />} /> */}
+     
         <Route
           path="/profile"
           element={
