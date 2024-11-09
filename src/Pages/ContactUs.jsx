@@ -1,31 +1,52 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useForm } from "react-hook-form";
-import { Button, InputGroup } from "react-bootstrap";
+import { useForm, Controller } from "react-hook-form";
+import { Button } from "react-bootstrap";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css"; // Import the default styles
 import { serverApi } from "../config";
 import Loader from "../Components/Loader"; // Import the Loader component
 
 const ContactUs = () => {
   const [loading, setLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState("");
+  const [phone, setPhone] = useState(""); // To store the selected phone number
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     reset,
+    trigger, // To manually trigger validation
   } = useForm();
+
+  // Custom validation for phone number length (max 15 digits after country code)
+  const validatePhoneNumber = (value) => {
+    const phoneNumberLength = value ? value.replace(/\D/g, "").length : 0;
+    if (phoneNumberLength > 15) {
+      return "Phone number cannot exceed 15 digits.";
+    }
+    return true; // Return true if validation passes
+  };
 
   const onSubmit = async (data) => {
     setLoading(true);
     setSubmitSuccess("");
+
+    // Manually trigger validation for all fields
+    const isValid = await trigger();
+    if (!isValid) {
+      setLoading(false);
+      return; // If validation fails, stop the submission
+    }
 
     try {
       const response = await axios.post(`${serverApi}/add_contact_us`, {
         name: data.fullName,
         email: data.email,
         recordedAt: data.recordedAt,
-        phoneNo: data.phone,
+        phoneNo: phone, // Pass the selected phone number with country code
         message: data.message,
       });
 
@@ -69,7 +90,9 @@ const ContactUs = () => {
               <label>Full name</label>
               <input
                 type="text"
-                {...register("fullName", { required: "Full name is required." })}
+                {...register("fullName", {
+                  required: "Full name is required.",
+                })}
                 placeholder="Enter full name"
                 className={`form-control ${errors.fullName ? "is-invalid" : ""}`}
               />
@@ -109,9 +132,7 @@ const ContactUs = () => {
                   required: "Recorded at is required.",
                 })}
                 placeholder="Enter recorded at"
-                className={`form-control ${
-                  errors.recordedAt ? "is-invalid" : ""
-                }`}
+                className={`form-control ${errors.recordedAt ? "is-invalid" : ""}`}
               />
               {errors.recordedAt && (
                 <div className="invalid-feedback d-block">
@@ -122,23 +143,28 @@ const ContactUs = () => {
 
             <div className="form-group">
               <label>Phone</label>
-              <InputGroup>
-                <InputGroup.Text id="basic-addon1">+91</InputGroup.Text>
-                <input
-                  type="text"
-                  {...register("phone", {
-                    required: "Phone number is required.",
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: "Phone number should only contain digits.",
-                    },
-                  })}
-                  placeholder="Phone number"
-                  aria-label="phoneNumber"
-                  aria-describedby="basic-addon1"
-                  className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-                />
-              </InputGroup>
+              <Controller
+                control={control}
+                name="phone"
+                rules={{
+                  required: "Phone number is required.",
+                  validate: validatePhoneNumber,
+                }}
+                render={({ field }) => (
+                  <PhoneInput
+                    international
+                    defaultCountry="IN"
+                    value={phone}
+                    onChange={(value) => {
+                      setPhone(value);
+                      field.onChange(value); // Sync value with react-hook-form
+                    }}
+                    className={`form-control custom-phone-input ${
+                      errors.phone ? "is-invalid" : ""
+                    }`}
+                  />
+                )}
+              />
               {errors.phone && (
                 <div className="invalid-feedback d-block">
                   {errors.phone.message}

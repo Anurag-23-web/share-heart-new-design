@@ -971,3 +971,47 @@ body {
   opacity: 1; /* Full opacity when loaded */
   transition: opacity 0.3s ease;
 }
+
+
+/* styles.css */
+/* Custom styling for the PhoneInput component */
+.custom-phone-input {
+  width: 100%;
+  padding: 1.1rem 0.75rem;
+  border-radius: 13px;
+  border: 1px solid #ced4da;
+  display: flex;
+  position: relative;
+}
+
+.PhoneInputInput {
+  border: none;
+  outline: none; /* Remove the focus outline */
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border-radius: 13px;
+  background-color: #fff;
+  font-size: 1rem;
+}
+
+.PhoneInputInput:focus {
+  border: none; /* Maintain border on focus */
+  box-shadow: none; /* Prevent default box-shadow for focus */
+}
+
+.PhoneInputCountry {
+  border: none;
+  border-radius: 13px;
+}
+
+/* Optional: Styling for dropdown container */
+.PhoneInputCountrySelector {
+  border: none;
+  border-radius: 13px;
+}
+
+.PhoneInputCountryIcon {
+  border: none;
+  border-radius: 13px;
+}
+
