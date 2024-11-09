@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-// import Footer from '../Components/Footer';
-// import Header from '../Components/Header';
-// import GetEternal from '../assets/image/getEternal.jpg';
 import { serverApi } from '../config';
 import axios from 'axios';
+import Loader from '../Components/Loader'; // Import the Loader component
 
 const GetEternalLife = () => {
     const [content, setContent] = useState({});
@@ -12,7 +10,7 @@ const GetEternalLife = () => {
 
     useEffect(() => {
         getPageData();
-    }, [])
+    }, []);
 
     async function getPageData() {
         try {
@@ -31,13 +29,21 @@ const GetEternalLife = () => {
     }
 
     return (
-        <div className='geteternalpage'>
-            <div className='contentSec'>
-                <div dangerouslySetInnerHTML={{ __html: content.content }} />
-         
+        <>
+            {loading && (
+                <div className="loader-overlay">
+                    <Loader />
+                </div>
+            )}
+            <div className={loading ? "content-opacity" : "content-visible"}>
+                <div className='geteternalpage'>
+                    <div className='contentSec'>
+                        <div dangerouslySetInnerHTML={{ __html: content.content }} />
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     );
-}
+};
 
 export default GetEternalLife;

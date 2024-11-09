@@ -6,6 +6,7 @@ import { serverApi } from "../config";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../Components/Loader";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -144,7 +145,7 @@ const Login = () => {
         {!showOtpField ? (
           <div className="d-flex justify-content-center">
             <Button type="submit" variant="danger" disabled={loading}>
-              {loading ? "Submitting..." : "Get OTP"}
+              {loading ? <Loader/>: "Get OTP"}
             </Button>
           </div>
         ) : (
@@ -182,7 +183,7 @@ const Login = () => {
                   onClick={handleResendOtp}
                   disabled={resendDisabled}
                 >
-                  {loading ? "Resending..." : "Resend OTP"}
+                  {loading ? <Loader/> : "Resend OTP"}
                 </Button>
               </div>
             ) : (
@@ -192,7 +193,7 @@ const Login = () => {
                   onClick={handleSubmit(handleVerifyOtp)}
                   disabled={loading}
                 >
-                  {loading ? "Verifying..." : "Verify OTP"}
+                  {loading ? <Loader/> : "Verify OTP"}
                 </Button>
               </div>
             )}

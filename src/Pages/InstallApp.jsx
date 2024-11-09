@@ -4,15 +4,12 @@ import { Link } from "react-router-dom";
 import Googleplay from "../assets/image/google-play.svg";
 import Appstore from "../assets/image/app-store.svg";
 import Background from "../assets/image/background-patterns.svg";
-import Videoman from "../assets/image/video-man.gif"; // Assuming this is the GIF you want to display
+import Videoman from "../assets/image/video-man.gif"; 
 
 const InstallApp = () => {
   return (
     <div>
-      {/* Background Image */}
-      {/* <img className="w-100" src={Background} alt="Background" /> */}
-
-      {/* Hero Section */}
+ 
       <section className="hero-section py-5">
         <Container>
           <Row className="justify-content-center align-items-center">

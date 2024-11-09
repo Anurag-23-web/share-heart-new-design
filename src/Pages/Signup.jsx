@@ -5,6 +5,7 @@ import { serverApi } from "../config";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Loader from "../Components/Loader";
 
 const Signup = () => {
   const {
@@ -117,6 +118,7 @@ const Signup = () => {
   };
 
   const handleResendOtp = async () => {
+    setLoading(true)
     setResendDisabled(true);
     setSuccessMessage("");
     setErrorMessage("");
@@ -131,13 +133,16 @@ const Signup = () => {
         setResendDisabled(false);
         setOtpExpired(false);
         startTimer();
+        setLoading(false)
       } else {
         setErrorMessage(response.data.message);
         setResendDisabled(false);
+        setLoading(false)
       }
     } catch (error) {
       setErrorMessage("Error resending OTP: " + error.message);
       setResendDisabled(false);
+      setLoading(false)
     }
   };
 
@@ -203,54 +208,53 @@ const Signup = () => {
           {!showOtpField && (
             <div className="mb-0 formBtn">
               <Button type="submit" variant="danger" disabled={loading}>
-                {loading ? "Submitting..." : "Generate OTP"}
+                {loading ? <Loader /> : "Generate OTP"}
               </Button>
             </div>
           )}
-        {showOtpField && (
-          <>
-            <div className="form-group mt-4">
-              <label>OTP</label>
-              <input
-                type="text"
-                className={`form-control ${errors.otp ? "is-invalid" : ""}`}
-                placeholder={`Enter OTP (${timer}s)`}
-                value={otp}
-                onInput={(e) => {
-                  const inputValue = e.target.value.replace(/\D/g, ""); // Only allow numeric input
-                  setOtp(inputValue);
-                  if (inputValue.length === 6)
-                    setErrorMessage(""); // Clear error on exact 6 digits
-                  else setErrorMessage("OTP must be exactly 6 digits");
-                }}
-                maxLength={6} // Ensure OTP is at most 6 digits
-              />
-         
-            </div>
+          {showOtpField && (
+            <>
+              <div className="form-group mt-4">
+                <label>OTP</label>
+                <input
+                  type="text"
+                  className={`form-control ${errors.otp ? "is-invalid" : ""}`}
+                  placeholder={`Enter OTP (${timer}s)`}
+                  value={otp}
+                  onInput={(e) => {
+                    const inputValue = e.target.value.replace(/\D/g, ""); // Only allow numeric input
+                    setOtp(inputValue);
+                    if (inputValue.length === 6)
+                      setErrorMessage(""); // Clear error on exact 6 digits
+                    else setErrorMessage("OTP must be exactly 6 digits");
+                  }}
+                  maxLength={6} // Ensure OTP is at most 6 digits
+                />
+              </div>
 
-            <div className="mb-0 formBtn">
-              {otpExpired ? (
-                <Button
-                  variant="danger"
-                  onClick={handleResendOtp}
-                  disabled={resendDisabled}
-                >
-                  Resend OTP
-                </Button>
-              ) : (
-                <Button
-                  variant="danger"
-                  onClick={handleVerifyOtp}
-                  disabled={loading}
-                >
-                  Verify OTP
-                </Button>
-              )}
-            </div>
-          </>
-        )}
+              <div className="mb-0 formBtn">
+                {otpExpired ? (
+                  <Button
+                    variant="danger"
+                    onClick={handleResendOtp}
+                    disabled={resendDisabled}
+                  >
+                
+                    {loading ? <Loader /> : " Resend OTP"}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="danger"
+                    onClick={handleVerifyOtp}
+                    disabled={loading}
+                  >
+                    {loading ? <Loader /> : "Verify OTP"}
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
         </form>
-
 
         <div className="text-center mt-4">
           <p>

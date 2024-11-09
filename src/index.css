@@ -947,3 +947,27 @@ body {
 }
 
 
+/* In your CSS file */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+  backdrop-filter: blur(5px); /* Applies a blur effect to the background */
+  z-index: 9999;
+}
+
+.content-opacity {
+  opacity: 0.5; /* Reduce the opacity */
+  transition: opacity 0.3s ease;
+}
+
+.content-visible {
+  opacity: 1; /* Full opacity when loaded */
+  transition: opacity 0.3s ease;
+}

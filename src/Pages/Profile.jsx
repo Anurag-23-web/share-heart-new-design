@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { serverApi } from "../config";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Components/Loader";
 
 const Profile = () => {
   const {
@@ -20,6 +21,7 @@ const Profile = () => {
     email: localStorage.getItem("email") || "john.doe@example.com",
     userId: localStorage.getItem("userId") || "defaultUserId", // Default if no userId in localStorage
   });
+  const [loading,setLoading] = useState(false)
 
   const navigate = useNavigate();
 
@@ -31,6 +33,7 @@ const Profile = () => {
   }, [setValue, userDetails]);
 
   const handleEditProfile = async (formData) => {
+    setLoading(true)
     // Add userId to the data before sending it to the server
     const data = { ...formData, userId: userDetails.userId };
 
@@ -39,7 +42,7 @@ const Profile = () => {
         `${serverApi}/update_user_profile`,
         data
       );
-      console.log(response);
+   
       if (response.data.status === "success") {
         setUserDetails(data);
         localStorage.setItem("firstName", data.firstName);
@@ -48,10 +51,12 @@ const Profile = () => {
         localStorage.setItem("userId", data.userId); // Update userId if needed
         toast.success("Profile updated successfully");
         navigate("/profile");
+        setLoading(false)
       } 
     } catch (error) {
       console.log(error.response.message);
       toast.error(error.response.data.message);
+      setLoading(false)
     }
   };
 
@@ -111,7 +116,8 @@ const Profile = () => {
 
           <div className="mb-0 formBtn text-center">
             <Button variant="danger" type="submit" className="mt-4">
-              Save Changes
+            
+              {loading ? <Loader/>: "Save Changes"}
             </Button>
           </div>
         </form>

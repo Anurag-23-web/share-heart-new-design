@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AboutVideo from "../assets/image/aboutVideo.mp4";
-import AboutVideo1 from "../assets/image/aboutVideo1.mp4";
-import ValueIC1 from "../assets/image/valueIC1.svg";
-import ValueIC2 from "../assets/image/valueIC2.svg";
-import ValueIC3 from "../assets/image/valueIC3.svg";
-import ValueIC4 from "../assets/image/valueIC4.svg";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { serverApi } from "../config";
 import axios from "axios";
+import Loader from "../Components/Loader"; // Import the Loader component
 
 const Aboutus = () => {
   const [aboutContent, setAboutContent] = useState(null);
@@ -44,56 +39,69 @@ const Aboutus = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
   return (
-    <div className="geteternalpage">
-      <div className="contentSec">
-        <h3 className="contentHeading">Our Mission</h3>
-        <p>
-          {aboutContent?.ourMissionContent || "No mission content available"}
-        </p>
-        <div className="aboutVideo">
-          <div className="videoPartin">
-            {aboutContent?.fVideo && renderMedia(aboutContent?.fVideo)}
-          </div>
-          <div className="videoPartin">
-            {aboutContent?.sVideo && renderMedia(aboutContent?.sVideo)}
-          </div>
+    <>
+      {loading && (
+        <div className="loader-overlay">
+          <Loader />
         </div>
+      )}
+      <div className={loading ? "content-opacity" : "content-visible"}>
+        <div className="geteternalpage">
+          <div className="contentSec">
+            <h3 className="contentHeading">Our Mission</h3>
+            <p>
+              {aboutContent?.ourMissionContent ||
+                "No mission content available"}
+            </p>
+            <div className="aboutVideo">
+              <div className="videoPartin">
+                {aboutContent?.fVideo && renderMedia(aboutContent?.fVideo)}
+              </div>
+              <div className="videoPartin">
+                {aboutContent?.sVideo && renderMedia(aboutContent?.sVideo)}
+              </div>
+            </div>
 
-        <h3 className="contentHeading">Our Story</h3>
-        <p>{aboutContent?.ourStoryContent || "No story content available"}</p>
+            <h3 className="contentHeading">Our Story</h3>
+            <p>
+              {aboutContent?.ourStoryContent || "No story content available"}
+            </p>
 
-        <h3 className="contentHeading">Our Vision</h3>
-        <p>{aboutContent?.ourVisionContent || "No vision content available"}</p>
+            <h3 className="contentHeading">Our Vision</h3>
+            <p>
+              {aboutContent?.ourVisionContent || "No vision content available"}
+            </p>
 
-        <div className="valuesSec">
-          <h3 className="contentHeading">Our Values</h3>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap:"15px"
-            }}
-            dangerouslySetInnerHTML={{ __html: aboutContent?.ourValues }}
-          />
+            <div className="valuesSec">
+              <h3 className="contentHeading">Our Values</h3>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  gap: "15px",
+                }}
+                dangerouslySetInnerHTML={{ __html: aboutContent?.ourValues }}
+              />
 
-          <h3 className="contentHeading">Join Us</h3>
-          <p>{aboutContent?.joinUsContent || "No join us content available"}</p>
+              <h3 className="contentHeading">Join Us</h3>
+              <p>
+                {aboutContent?.joinUsContent || "No join us content available"}
+              </p>
+            </div>
+          </div>
+
+          <section className="homesubmit">
+            <div className="homesubmitin">
+              <h2 className="headingtype2">Submit your story now</h2>
+              <Button type="submit" variant="danger">
+                Submit now
+              </Button>
+            </div>
+          </section>
         </div>
       </div>
-
-      <section className="homesubmit">
-        <div className="homesubmitin">
-          <h2 className="headingtype2">Submit your story now</h2>
-          <Button type="submit" variant="danger">
-            Submit now
-          </Button>
-        </div>
-      </section>
-    </div>
+    </>
   );
 };
 

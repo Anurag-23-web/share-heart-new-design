@@ -6,10 +6,12 @@ import Mail from "../assets/image/mail-icon.svg";
 import Call from "../assets/image/ca1l-icon.svg";
 import { serverApi } from "../config";
 import axios from "axios";
+import Loader from "../Components/Loader"; // Import the Loader component
 
 const HelpDesk = () => {
   const [faqList, setFaqList] = useState([]);
   const [helpDeskData, setHelpDeskData] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     getFaq();
@@ -48,6 +50,8 @@ const HelpDesk = () => {
       }
     } catch (error) {
       console.log("Error fetching help desk content:", error.message);
+    } finally {
+      setLoading(false); // Set loading to false once data is fetched
     }
   }
 
@@ -62,84 +66,92 @@ const HelpDesk = () => {
   }
 
   return (
-    <div>
-      <section className="hero-section">
-        <Container>
-          <div className="section-heading text-center">
-            <h2>Help Desk</h2>
-            <p>
-              {helpDeskData.length > 0 ? helpDeskData[0].content : "Loading..."}
-            </p>
-          </div>
-        </Container>
-      </section>
-      <section className="faq-section">
-        <Container>
-          <div className="section-heading text-center">
-            <h2>Frequently Asked Questions (FAQs)</h2>
-          </div>
-          <div className="faq-tabs">
-            <Tabs defaultActiveKey={0} id="faq-tabs">
-              {faqList.map((item, i) => (
-                <Tab eventKey={i} title={item.name} key={i}>
-                  <Accordion defaultActiveKey={0}>
-                    {item.faqData.map((faq, j) => (
-                      <Accordion.Item eventKey={j} key={j}>
-                        <Accordion.Header>
-                          {j + 1}. {faq.question}
-                        </Accordion.Header>
-                        <Accordion.Body>
-                          <p>{faq.answer}</p>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                    ))}
-                  </Accordion>
-                </Tab>
-              ))}
-            </Tabs>
-          </div>
-        </Container>
-      </section>
-
-      <section className="contact-section">
-        <Container>
-          <Row>
-            <Col md={12} className="text-center">
-              <h2>Contact Support</h2>
+    <>
+      {loading && (
+        <div className="loader-overlay">
+          <Loader />
+        </div>
+      )}
+      <div className={loading ? "content-opacity" : "content-visible"}>
+        <section className="hero-section">
+          <Container>
+            <div className="section-heading text-center">
+              <h2>Help Desk</h2>
               <p>
-                If you didn't find the answer to your question or need
-                additional assistance, our support team is here to help.
+                {helpDeskData.length > 0 ? helpDeskData[0].content : "Loading..."}
               </p>
-            </Col>
-            <Col md={6}>
-              <div className="reach-box">
-                <div className="icon-box">
-                  <img className="img-fluid" src={Mail} alt="mail icon" />
+            </div>
+          </Container>
+        </section>
+
+        <section className="faq-section">
+          <Container>
+            <div className="section-heading text-center">
+              <h2>Frequently Asked Questions (FAQs)</h2>
+            </div>
+            <div className="faq-tabs">
+              <Tabs defaultActiveKey={0} id="faq-tabs">
+                {faqList.map((item, i) => (
+                  <Tab eventKey={i} title={item.name} key={i}>
+                    <Accordion defaultActiveKey={0}>
+                      {item.faqData.map((faq, j) => (
+                        <Accordion.Item eventKey={j} key={j}>
+                          <Accordion.Header>
+                            {j + 1}. {faq.question}
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            <p>{faq.answer}</p>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      ))}
+                    </Accordion>
+                  </Tab>
+                ))}
+              </Tabs>
+            </div>
+          </Container>
+        </section>
+
+        <section className="contact-section">
+          <Container>
+            <Row>
+              <Col md={12} className="text-center">
+                <h2>Contact Support</h2>
+                <p>
+                  If you didn't find the answer to your question or need
+                  additional assistance, our support team is here to help.
+                </p>
+              </Col>
+              <Col md={6}>
+                <div className="reach-box">
+                  <div className="icon-box">
+                    <img className="img-fluid" src={Mail} alt="mail icon" />
+                  </div>
+                  <h3>
+                    <span>For support inquiries, email us at:</span>
+                    <Link to="/">Hello@shareheart.com</Link>
+                  </h3>
                 </div>
-                <h3>
-                  <span>For support inquiries, email us at:</span>
-                  <Link to="/">Hello@shareheart.com</Link>
-                </h3>
-              </div>
-            </Col>
-            <Col md={6}>
-              <div className="reach-box">
-                <div className="icon-box">
-                  <img className="img-fluid" src={Call} alt="call icon" />
+              </Col>
+              <Col md={6}>
+                <div className="reach-box">
+                  <div className="icon-box">
+                    <img className="img-fluid" src={Call} alt="call icon" />
+                  </div>
+                  <h3>
+                    <span>
+                      Call us @ Monday through Friday from 9 AM to 5 PM Central
+                      time
+                    </span>
+                    <Link to="/">+1 (914) 282 9994</Link>
+                  </h3>
                 </div>
-                <h3>
-                  <span>
-                    Call us @ Monday through Friday from 9 AM to 5 PM Central
-                    time
-                  </span>
-                  <Link to="/">+1 (914) 282 9994</Link>
-                </h3>
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </div>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      </div>
+    </>
   );
 };
 
