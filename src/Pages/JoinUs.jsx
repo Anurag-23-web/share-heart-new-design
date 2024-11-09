@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { Button } from "react-bootstrap";
@@ -7,6 +7,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { serverApi } from "../config";
 import axios from "axios";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css"; // Import the default styles
 import Loader from '../Components/Loader';  // Assuming you have a custom Loader component
 
 const JoinUs = () => {
@@ -19,6 +21,8 @@ const JoinUs = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
+    trigger, // To manually trigger validation
   } = useForm();
 
   // Handle form submission
@@ -98,24 +102,30 @@ const JoinUs = () => {
           {/* Phone Field */}
           <Form.Group className="form-group">
             <Form.Label>Phone</Form.Label>
-            <InputGroup>
-              <InputGroup.Text id="basic-addon1">+91</InputGroup.Text>
-              <Form.Control
-                type="text"
-                placeholder="Enter phone number"
-                {...register("phone", {
-                  required: "Phone number is required",
-                  minLength: {
-                    value: 10,
-                    message: "Phone number must be at least 10 digits",
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: "Phone number must be at most 10 digits",
-                  },
-                })}
-              />
-            </InputGroup>
+            <Controller
+              control={control}
+              name="phone"
+              rules={{
+                required: "Phone number is required",
+                minLength: {
+                  value: 10,
+                  message: "Phone number must be at least 10 digits",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "Phone number must be at most 10 digits",
+                },
+              }}
+              render={({ field }) => (
+                <PhoneInput
+                  international
+                  defaultCountry="IN"
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)} // Sync with react-hook-form
+                  className={`form-control  custom-phone-input ${errors.phone ?  "is-invalid" : ""}`}
+                />
+              )}
+            />
             {errors.phone && <p className="text-danger">{errors.phone.message}</p>}
           </Form.Group>
 
