@@ -45,7 +45,7 @@ const ContactUs = () => {
       const response = await axios.post(`${serverApi}/add_contact_us`, {
         name: data.fullName,
         email: data.email,
-        recordedAt: data.recordedAt,
+        recordedAt: data.recordedAt || "null",
         phoneNo: phone, // Pass the selected phone number with country code
         message: data.message,
       });
@@ -53,6 +53,7 @@ const ContactUs = () => {
       if (response.data.status === "success") {
         setSubmitSuccess("Contact Us form submitted successfully!");
         reset();
+        setPhone("")
 
         // Remove success message after 2 seconds
         setTimeout(() => {
@@ -87,7 +88,7 @@ const ContactUs = () => {
 
           <form onSubmit={handleSubmit(onSubmit)} className="form-lable-mangne">
             <div className="form-group">
-              <label>Full name</label>
+              <label>Full name <span style={{color:"red"}}>*</span></label>
               <input
                 type="text"
                 {...register("fullName", {
@@ -104,7 +105,7 @@ const ContactUs = () => {
             </div>
 
             <div className="form-group">
-              <label>Email</label>
+              <label>Email <span style={{color:"red"}}>*</span></label>
               <input
                 type="email"
                 {...register("email", {
@@ -124,7 +125,7 @@ const ContactUs = () => {
               )}
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
               <label>Recorded at</label>
               <input
                 type="text"
@@ -139,41 +140,46 @@ const ContactUs = () => {
                   {errors.recordedAt.message}
                 </div>
               )}
-            </div>
+            </div> */}
+
+<div className="form-group">
+  <label>Phone <span style={{color:"red"}}>*</span></label>
+  <Controller
+    control={control}
+    name="phone"
+    rules={{
+      required: "Phone number is required.",
+      validate: {
+        isValidLength: (value) =>
+          value?.replace(/\D/g, "").length >= 9 || "Phone number must be at least 9 digits.",
+        isValidPhone: validatePhoneNumber,
+      },
+    }}
+    render={({ field }) => (
+      <PhoneInput
+        international
+        defaultCountry="IN"
+        value={phone}
+        onChange={(value) => {
+          setPhone(value);
+          field.onChange(value); // Sync value with react-hook-form
+        }}
+        className={`form-control custom-phone-input ${
+          errors.phone ? "is-invalid" : ""
+        }`}
+      />
+    )}
+  />
+  {errors.phone && (
+    <div className="invalid-feedback d-block">
+      {errors.phone.message}
+    </div>
+  )}
+</div>
+
 
             <div className="form-group">
-              <label>Phone</label>
-              <Controller
-                control={control}
-                name="phone"
-                rules={{
-                  required: "Phone number is required.",
-                  validate: validatePhoneNumber,
-                }}
-                render={({ field }) => (
-                  <PhoneInput
-                    international
-                    defaultCountry="IN"
-                    value={phone}
-                    onChange={(value) => {
-                      setPhone(value);
-                      field.onChange(value); // Sync value with react-hook-form
-                    }}
-                    className={`form-control custom-phone-input ${
-                      errors.phone ? "is-invalid" : ""
-                    }`}
-                  />
-                )}
-              />
-              {errors.phone && (
-                <div className="invalid-feedback d-block">
-                  {errors.phone.message}
-                </div>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label>Type your message</label>
+              <label>Type your message <span style={{color:"red"}}>*</span></label>
               <textarea
                 {...register("message", { required: "Message is required." })}
                 placeholder="Type your message"

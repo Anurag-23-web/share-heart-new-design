@@ -58,7 +58,7 @@ const JoinUs = () => {
         <Form onSubmit={handleSubmit(onSubmit)} className="form-lable-mangne">
           {/* Full Name Field */}
           <Form.Group className="form-group">
-            <Form.Label>Full name</Form.Label>
+            <Form.Label>Full name <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter full name"
@@ -71,7 +71,7 @@ const JoinUs = () => {
 
           {/* Email Field */}
           <Form.Group className="form-group">
-            <Form.Label>Email</Form.Label>
+            <Form.Label>Email <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Control
               type="email"
               placeholder="Enter email"
@@ -88,7 +88,7 @@ const JoinUs = () => {
 
           {/* Recorded At Field */}
           <Form.Group className="form-group">
-            <Form.Label>Recorded at</Form.Label>
+            <Form.Label>Recorded at <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter location"
@@ -101,18 +101,18 @@ const JoinUs = () => {
 
           {/* Phone Field */}
           <Form.Group className="form-group">
-            <Form.Label>Phone</Form.Label>
+            <Form.Label>Phone <span style={{color:"red"}}>*</span></Form.Label>
             <Controller
               control={control}
               name="phone"
               rules={{
                 required: "Phone number is required",
                 minLength: {
-                  value: 10,
+                  value: 7,
                   message: "Phone number must be at least 10 digits",
                 },
                 maxLength: {
-                  value: 10,
+                  value: 20,
                   message: "Phone number must be at most 10 digits",
                 },
               }}
@@ -131,7 +131,7 @@ const JoinUs = () => {
 
           {/* Church Web Link Field */}
           <Form.Group className="form-group">
-            <Form.Label>Your Church Web link</Form.Label>
+            <Form.Label>Your Church Web link <span style={{color:"red"}}>*</span></Form.Label>
             <Form.Select
               {...register("churchWebLink", {
                 required: "Church web link is required",

@@ -37,10 +37,11 @@ const HelpDesk = () => {
     try {
       const response = await axios.get(`${serverApi}/get_content`);
       const helpDeskData = response?.data?.data;
+      console.log(response)
 
       // Check if the title is "Help Desk" and filter the data
       if (helpDeskData && Array.isArray(helpDeskData)) {
-        const helpDeskContent = helpDeskData.filter(item => item.title === "Help Desk");
+        const helpDeskContent = helpDeskData.filter(item => item.page === "help-desk");
 
         // Clean the HTML tags and &nbsp; before setting it to state
         if (helpDeskContent.length > 0) {
@@ -129,7 +130,7 @@ const HelpDesk = () => {
                   </div>
                   <h3>
                     <span>For support inquiries, email us at:</span>
-                    <Link to="/">Hello@shareheart.com</Link>
+                    <Link to="/" style={{fontSize:"24px"}}>Hello@shareheart.com</Link>
                   </h3>
                 </div>
               </Col>

@@ -16,8 +16,8 @@ const Header = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  
-  const userId = localStorage.getItem('userId'); 
+
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const div1 = div1Ref.current;
@@ -100,40 +100,40 @@ const Header = () => {
         </div>
 
         {location.pathname !== "/login" && location.pathname !== "/signup" ? (
-        userId ? (
-          <div
-            className="userIcon"
-            style={{
-              background: "lightblue",
-              width: "60px",
-              height: "60px",
-              borderRadius: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "absolute",
-              right: "50px",
-              cursor: "pointer",
-            }}
-            onClick={toggleModal}
-          >
-            <User />
-          </div>
-        ) : (
-          <div
-            style={{
-              position: "absolute",
-              right: "50px",
-              top: "45px",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate('/login')} // Redirect to login page
-          >
-            <p style={{fontWeight:"600"}}>Login</p>
-          </div>
-        )
-      ) : null}
-    
+          userId ? (
+            <div
+              className="userIcon"
+              style={{
+                background: "lightblue",
+                width: "60px",
+                height: "60px",
+                borderRadius: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+                right: "50px",
+                cursor: "pointer",
+              }}
+              onClick={toggleModal}
+            >
+              <User />
+            </div>
+          ) : (
+            <div
+              style={{
+                position: "absolute",
+                right: "50px",
+                top: "45px",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/login")} // Redirect to login page
+            >
+              <p style={{ fontWeight: "600" }}>Login</p>
+            </div>
+          )
+        ) : null}
+
         {modalOpen && (
           <div
             className="userProfileModal"
@@ -216,6 +216,11 @@ const Header = () => {
               <li>
                 <Link to="/language">Language</Link>
               </li>
+              {userId && (
+                <li>
+                  <Link to="/hashtags">Hashtags</Link>
+                </li>
+              )}
               <li>
                 <Link to="/about-us">About</Link>
               </li>
@@ -229,7 +234,13 @@ const Header = () => {
                 <Link to="/login">Login</Link>
               </li>
               <li>
+                <Link to="/blog">Blog</Link>
+              </li>
+              <li>
                 <Link to="/help-desk">Helpdesk</Link>
+              </li>
+              <li>
+                <Link to="/volunteer">Volunteer</Link>
               </li>
               <li>
                 <Link to="/install-app">Install App</Link>

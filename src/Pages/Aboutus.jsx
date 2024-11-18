@@ -31,11 +31,11 @@ const Aboutus = () => {
     if (isVideo(mediaUrl)) {
       return (
         <video className="videoreal" autoPlay muted loop>
-          <source src={`http://localhost:8000${mediaUrl}`} type="video/mp4" />
+          <source src={`${serverApi}`+ mediaUrl} type="video/mp4" />
         </video>
       );
     } else {
-      return <img className="mediaImage" src={mediaUrl} alt="Content" />;
+      return <img className="mediaImage" src={`${serverApi}`+ mediaUrl} alt="Content" />;
     }
   };
 

@@ -19,7 +19,11 @@ import HelpDesk from "./Pages/HelpDesk";
 import Profile from "./Pages/Profile";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import { useEffect } from "react";
-// import Video  from "./Pages/Video";
+import Volunteer from "./Pages/Volunteer";
+import Blog from "./Pages/Blog";
+import BlogDetail from "./Pages/BlogDetail";
+import Hashtag from "./Pages/Hashtag";
+
 
 
 
@@ -55,7 +59,10 @@ function Layout() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/install-app" element={<InstallApp />} />
         <Route path="/help-desk" element={<HelpDesk />} />
-        {/* <Route path="/video" element={<Video />} /> */}
+        <Route path="/volunteer" element={<Volunteer />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog-details/:slug" element={<BlogDetail />} />
+        <Route path="/hashtags" element={<Hashtag />} />
      
         <Route
           path="/profile"

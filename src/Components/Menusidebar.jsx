@@ -35,7 +35,7 @@ const Menusidebar = () => {
                     </ul>
                 </div>
             </div>
-            <div className='menucopyright'>@ 2024 WowSquare LLC</div>
+            <div className='menucopyright'>@ 2024 ShareHeart</div>
         </div>
     );
 }

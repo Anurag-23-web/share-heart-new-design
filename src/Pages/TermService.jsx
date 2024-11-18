@@ -4,6 +4,7 @@ import Footer from '../Components/Footer';
 import Loader from '../Components/Loader'; // Assuming you have a Loader component
 import axios from 'axios';
 import { serverApi } from '../config';
+import moment from "moment";
 
 const TermService = () => {
     const [content, setContent] = useState({});
@@ -45,7 +46,13 @@ const TermService = () => {
                     <>
                         {/* Page Title */}
                         <h3 className='contentHeading'>{content.title}</h3>
-                        <div className='contentitalic'>(Effective Date: {content.effective_date || 'April 2024'})</div>
+                        <div className="contentitalic">
+              (Effective Date:{" "}
+              {content.effectiveDate
+                ? moment(content.effectiveDate).format("DD-MM-YY")
+                : "N/A"}
+              )
+            </div>
 
                         {/* Dynamically Rendering Content */}
                         <div dangerouslySetInnerHTML={{ __html: content.content }} />
